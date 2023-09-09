@@ -24,6 +24,8 @@ fi
 case $device in
         "chassis") 
             ip=$network_prefix"100" 
+            # SSH key already uploaded to CMC, use service account instead of root to use it.
+            IDRAC_USER=service
         ;;
         "network") ip=$network_prefix"200" ;;
         *) 
@@ -75,7 +77,8 @@ case $service in
     ;;
     "ssh")
         echo Starting SSH
-        ssh -i $identity_file -J $jumphost $IDRAC_USER@$ip
+        ssh $IDRAC_USER@localhost -i $identity_file -p 8022 -o "StrictHostKeyChecking=no" -o "KexAlgorithms=+diffie-hellman-group14-sha1,diffie-hellman-group1-sha1" -o "Ciphers=+3des-cbc" -o "PubkeyAcceptedAlgorithms=+ssh-rsa" -o "HostkeyAlgorithms=+ssh-rsa"
+        #ssh -i $identity_file -J $jumphost $IDRAC_USER@$ip
     ;;
     "web")
         url=https://localhost:8443/index.html
