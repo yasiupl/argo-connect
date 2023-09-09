@@ -1,16 +1,15 @@
 #!/bin/sh
 
-
-jumphost=argo@argo
 device=$1
 service=$2
 command=$3
+jumphost=argo@argo
 network_prefix="192.168.0."
-isIDRAC=false
 identity_file=./argo.private
 SSH_USER=service
 IDRAC_USER=root
 IDRAC_PASSWORD=calvin
+isIDRAC=false
 
 ## Get IP
 if [ -z $device ]; then
@@ -43,13 +42,13 @@ esac
 ## Run Proxy
 if [ -f $identity_file ]; then
     echo Connecting to $ip via $jumphost
-    # Kill all already running proxies
+    # Kill all already running proxies - no support for parallel connections to multiple iDRACs
     ps aux | grep $jumphost | grep -v grep | awk '{print $2}' | xargs kill -9 &
     sleep 0.1
     # Open a new proxy
     ssh -i $identity_file -N -L 8443:$ip:443 -L 8022:$ip:22 -L 8080:$ip:80 -L 5900:$ip:5900 -L 5901:$ip:5901 -L 3668:$ip:3668 -L 3669:$ip:3669 $jumphost &
     ssh_process=$!
-    sleep 0.5
+    sleep 1
     echo Started proxy \($ssh_process\)
 else   
     echo "SSH identity not found, cannot open Proxy. Exiting..."
