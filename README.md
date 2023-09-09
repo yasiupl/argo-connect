@@ -11,7 +11,7 @@ Very specific to the way I have the server set up. Everything is routed through 
 `./argo_Connect.sh 1 kvm` - run KVM connection to blade number 1
 
 
-`./argo_connect.sh 1 ssh` - open web iDRAC GUI
+`./argo_connect.sh 1 ssh` - open iDRAC SSH connection
 
 
 `./argo_connect.sh 1 web` - open web iDRAC GUI
