@@ -1,0 +1,3 @@
+[submodule "bootleg-idrac6-client"]
+	path = bootleg-idrac6-client
+	url = git@github.com:yasiupl/bootleg-idrac6-client.git
