@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 device=$1
 service=$2
@@ -88,7 +88,7 @@ case $service in
         url=https://localhost:8443/index.html
         echo Starting $url
         xdg-open $url
-        read -p "Press any key to exit"
+        read -p "Press any key to exit" 
     ;;
     "web-insecure") 
         url=http://localhost:8080/index.html
