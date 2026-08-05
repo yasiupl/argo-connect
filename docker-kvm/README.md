@@ -58,15 +58,16 @@ On WSL, Docker Desktop runs containers in its own VM, so `--network host` does *
 `127.0.0.1` — hence `--add-host=host.docker.internal:host-gateway`. If your user isn't in the
 `docker` group yet, run with `DOCKER='sg docker -c'`.
 
-### From inside the network — `docker-compose.yml` (the management-host deployment)
+### From inside the network — `docker-compose.yml.example` (the management-host deployment)
 
 On a host that already sits on `192.168.0.0/24` (Pi, mini-PC, or a management blade) no proxy is
 needed at all — containers dial the iDRACs directly:
 
 ```bash
-echo "IDRAC_PASSWORD=..." > .env
-docker compose up -d                   # all 15 present blades
-docker compose up -d kvm14             # or just one
+cp docker-compose.yml.example docker-compose.yml   # then edit hostnames/network to taste
+echo "IDRAC_PASSWORD=..." > .env                   # .env is gitignored
+docker compose up -d                               # all 15 present blades
+docker compose up -d kvm14                         # or just one
 ```
 
 This gives **one URL per blade** via Traefik labels (`blade14.kvm.argo.y4s.io`), matching the
