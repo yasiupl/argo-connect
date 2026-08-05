@@ -1,0 +1,172 @@
+# All 16 blade consoles, one URL each, behind Traefik.
+#
+# Intended for a MANAGEMENT HOST INSIDE the CMC network (Pi, mini-PC, or a management blade) —
+# each container dials its iDRAC at 192.168.0.10<N> directly, so no SSH proxy is involved and all
+# 16 can run at once. From outside the management network use ../argo_kvm.sh instead, which routes
+# through a single shared `ssh -D` SOCKS proxy.
+#
+#   docker compose up -d              # all 16
+#   docker compose up -d kvm14        # just one
+#   docker compose --profile idle up -d   # (nothing extra; profiles reserved for future use)
+#
+# URLs are HOST-based (blade14.kvm.argo.y4s.io), not path-based (…/blade14). noVNC resolves its
+# assets and websocket from the root path, so path-prefix routing needs stripPrefix plus websocket
+# rewriting and breaks easily. Subdomains avoid all of that.
+#
+# Set IDRAC_PASSWORD in a .env file next to this one (and keep it out of git — the repo's
+# .gitignore already covers .env).
+
+x-kvm: &kvm
+  image: argo-kvm
+  build: .
+  restart: unless-stopped
+  environment: &kvm-env
+    IDRAC_USER: "${IDRAC_USER:-root}"
+    IDRAC_PASSWORD: "${IDRAC_PASSWORD:?set IDRAC_PASSWORD in .env}"
+  networks: [kvm]
+
+x-labels: &labels
+  traefik.enable: "true"
+  traefik.docker.network: "kvm"
+
+services:
+  kvm1:
+    <<: *kvm
+    container_name: argo-kvm1
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.101:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm1.rule: "Host(`blade1.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm1.loadbalancer.server.port: "5800"
+
+  kvm2:
+    <<: *kvm
+    container_name: argo-kvm2
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.102:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm2.rule: "Host(`blade2.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm2.loadbalancer.server.port: "5800"
+
+  kvm3:
+    <<: *kvm
+    container_name: argo-kvm3
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.103:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm3.rule: "Host(`blade3.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm3.loadbalancer.server.port: "5800"
+
+  kvm4:
+    <<: *kvm
+    container_name: argo-kvm4
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.104:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm4.rule: "Host(`blade4.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm4.loadbalancer.server.port: "5800"
+
+  kvm5:
+    <<: *kvm
+    container_name: argo-kvm5
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.105:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm5.rule: "Host(`blade5.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm5.loadbalancer.server.port: "5800"
+
+  kvm6:
+    <<: *kvm
+    container_name: argo-kvm6
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.106:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm6.rule: "Host(`blade6.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm6.loadbalancer.server.port: "5800"
+
+  kvm7:
+    <<: *kvm
+    container_name: argo-kvm7
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.107:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm7.rule: "Host(`blade7.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm7.loadbalancer.server.port: "5800"
+
+  kvm8:
+    <<: *kvm
+    container_name: argo-kvm8
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.108:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm8.rule: "Host(`blade8.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm8.loadbalancer.server.port: "5800"
+
+  # slot 9 is physically removed from the chassis — see ../../CLAUDE.md
+
+  kvm10:
+    <<: *kvm
+    container_name: argo-kvm10
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.110:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm10.rule: "Host(`blade10.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm10.loadbalancer.server.port: "5800"
+
+  kvm11:
+    <<: *kvm
+    container_name: argo-kvm11
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.111:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm11.rule: "Host(`blade11.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm11.loadbalancer.server.port: "5800"
+
+  kvm12:
+    <<: *kvm
+    container_name: argo-kvm12
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.112:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm12.rule: "Host(`blade12.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm12.loadbalancer.server.port: "5800"
+
+  kvm13:
+    <<: *kvm
+    container_name: argo-kvm13
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.113:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm13.rule: "Host(`blade13.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm13.loadbalancer.server.port: "5800"
+
+  kvm14:
+    <<: *kvm
+    container_name: argo-kvm14
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.114:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm14.rule: "Host(`blade14.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm14.loadbalancer.server.port: "5800"
+
+  kvm15:
+    <<: *kvm
+    container_name: argo-kvm15
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.115:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm15.rule: "Host(`blade15.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm15.loadbalancer.server.port: "5800"
+
+  kvm16:
+    <<: *kvm
+    container_name: argo-kvm16
+    environment: {<<: *kvm-env, IDRAC_HOST: "192.168.0.116:443"}
+    labels:
+      <<: *labels
+      traefik.http.routers.kvm16.rule: "Host(`blade16.kvm.argo.y4s.io`)"
+      traefik.http.services.kvm16.loadbalancer.server.port: "5800"
+
+networks:
+  kvm:
+    name: kvm
